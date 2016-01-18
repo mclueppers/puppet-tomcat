@@ -1,0 +1,8 @@
+CATALINA_BASE="<%= scope['tomcat::base_folder'] %>/<%= @instance_name %>"
+CATALINA_HOME="<%= scope['tomcat::params::share_dir_r'] %>"
+JASPER_HOME="<%= scope['tomcat::base_folder'] %>/<%= @instance_name %>"
+CATALINA_TMPDIR="<%= scope['tomcat::base_folder'] %>/<%= @instance_name %>/temp"
+TOMCAT_USER="<%= @account %>"
+CONNECTOR_PORT=<%= @ajp_port %>
+CATALINA_PID=/var/run/<%= @instance_name %>.pid
+<% if @catalina_opts -%>CATALINA_OPTS="<%= @catalina_opts -%>"<% end %>

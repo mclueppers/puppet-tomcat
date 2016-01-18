@@ -1,0 +1,48 @@
+    <Engine name="Catalina" defaultHost="<%= defaulthost -%>"<% if @tomcat_cluster -%> jvmRoute="<%= jvmroute -%>"<% end -%>>
+        <Realm className="org.apache.catalina.realm.UserDatabaseRealm"
+             resourceName="UserDatabase"/>
+        <Host name="localhost"  appBase="webapps"
+            unpackWARs="true" autoDeploy="true"
+            xmlValidation="false" xmlNamespaceAware="false">
+<% if @tomcat_cluster -%>
+        <Cluster className="org.apache.catalina.ha.tcp.SimpleTcpCluster"
+                channelSendOptions="6">
+        <Manager className="org.apache.catalina.ha.session.DeltaManager"
+                expireSessionsOnShutdown="false"
+                notifyListenersOnReplication="true"
+		stateTransferTimeout="30" />
+        <Channel className="org.apache.catalina.tribes.group.GroupChannel">
+                <Membership className="org.apache.catalina.tribes.membership.McastService"
+                        address="<%= @membership['address'] -%>"
+                        port="<%= @membership['port'] -%>"
+                        frequency="<%= @membership['frequency'] -%>"
+                        dropTime="<%= @membership['droptime'] -%>"/>
+                <Receiver className="org.apache.catalina.tribes.transport.nio.NioReceiver"
+                        address="<%= @receiver['address'] -%>"
+                        port="<%= @receiver['port'] -%>"
+                        selectorTimeout="<%= @receiver['selectortimeout'] -%>"
+                        autoBind="<%= @receiver['autobind'] -%>"
+                        maxThreads="<%= @receiver['maxthreads'] -%>"/>
+                <Sender className="org.apache.catalina.tribes.transport.ReplicationTransmitter">
+                        <Transport className="org.apache.catalina.tribes.transport.nio.PooledParallelSender"/>
+                </Sender>
+                <Interceptor className="org.apache.catalina.tribes.group.interceptors.TcpFailureDetector"/>
+                <Interceptor className="org.apache.catalina.tribes.group.interceptors.MessageDispatch15Interceptor"/>
+                <Interceptor className="org.apache.catalina.tribes.group.interceptors.ThroughputInterceptor"/>
+        </Channel>
+        <Valve className="org.apache.catalina.ha.tcp.ReplicationValve"
+                filter=".*\.gif;.*\.js;.*\.jpg;.*\.png;.*\.htm;.*\.html;.*\.css;.*\.txt;"/>
+        <Valve className='org.apache.catalina.ha.session.JvmRouteBinderValve'/>
+        <Deployer className="org.apache.catalina.ha.deploy.FarmWarDeployer"
+                tempDir="<%= @deployer['tempdir'] -%>"
+                deployDir="<%= @deployer['deploydir'] -%>"
+                watchDir="<%= @deployer['watchdir'] -%>"
+                watchEnabled="<%= @deployer['watchenabled'] -%>"/>
+        <ClusterListener className='org.apache.catalina.ha.session.JvmRouteSessionIDBinderListener'/>
+        <ClusterListener className="org.apache.catalina.ha.session.ClusterSessionListener"/>
+        </Cluster>
+<% end -%>
+        <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"  
+               prefix="localhost_access_log." suffix=".txt" pattern="common" resolveHosts="false"/>
+      </Host>
+    </Engine>
