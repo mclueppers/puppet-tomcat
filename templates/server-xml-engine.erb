@@ -42,7 +42,8 @@
         <ClusterListener className="org.apache.catalina.ha.session.ClusterSessionListener"/>
         </Cluster>
 <% end -%>
-        <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"  
-               prefix="localhost_access_log." suffix=".txt" pattern="common" resolveHosts="false"/>
+         <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
+               prefix="localhost_access-" suffix=".log" rotatable="true" fileDateFormat="yyyy-MM-dd"
+               pattern="%h %l %u %t &quot;%r&quot; %s %p %b %D  &quot;%{Referer}i&quot; &quot;%{User-Agent}i&quot;" />
       </Host>
     </Engine>
