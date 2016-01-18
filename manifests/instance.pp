@@ -12,7 +12,9 @@ define tomcat::instance (
   $catalina_opts = undef,
   $templates_url = undef
 ) {
-  include tomcat
+  if ! defined(Class['tomcat']) {
+    include tomcat
+  }
 
   $instance_name = "tomcat${::tomcat::params::majorversion}/$name"
   $catalina_home = "${::tomcat::params::share_dir_r}"
