@@ -11,7 +11,7 @@ class tomcat::params (
 
   $cache_dir_r = "/var/cache/tomcat${majorversion}"
   $log_dir_r   = "/var/log/tomcat${majorversion}"
-  $app_dir_r   = "${base_folder}/tomcat${majorversion}"
+  $app_dir_r   = "${::tomcat::base_folder}/tomcat${majorversion}"
   #$initd_r     = "/etc/init.d/tomcat${majorversion}"
 
   case $::operatingsystem {
@@ -22,7 +22,7 @@ class tomcat::params (
         '6': {
           $share_dir_r    = $use_repo ? {
             true  => "/usr/share/tomcat6",
-            false => "${base_folder}/apache-tomcat-${version}"
+            false => "${::tomcat::base_folder}/apache-tomcat-${version}"
           }
 
           $initd_r        = "/etc/init.d/tomcat${majorversion}"
@@ -40,7 +40,7 @@ class tomcat::params (
         '7': {
           $share_dir_r = $use_repo ? {
             true  => "/usr/share/tomcat",
-            false => "${base_folder}/apache-tomcat-${version}"
+            false => "${::tomcat::base_folder}/apache-tomcat-${version}"
           }
 
           $initd_r     = '/usr/lib/systemd/system/tomcat.service'
@@ -58,7 +58,7 @@ class tomcat::params (
     'Debian', 'Ubuntu': {
       $share_dir_r = $use_repo ? {
         true  => "/usr/share/tomcat",
-        false => "${base_folder}/apache-tomcat-${version}"
+        false => "${::tomcat::base_folder}/apache-tomcat-${version}"
       }
  
       $sysconfig_r = "/etc/default/tomcat${majorversion}"
