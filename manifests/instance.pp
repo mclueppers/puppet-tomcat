@@ -212,6 +212,6 @@ define tomcat::instance (
   #######
   service { "tomcat${::tomcat::params::majorversion}-${name}":
     enable  => true,
-    require => File["${::tomcat::params::initd_r}-${name}"],
+    require => File[$initd_final],
   }
 }
