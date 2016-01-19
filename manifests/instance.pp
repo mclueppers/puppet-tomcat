@@ -147,7 +147,7 @@ define tomcat::instance (
     replace => false,
     recurse => true,
     purge   => false,
-    source  => 'file:${::tomcat::params::share_dir_r}/conf',
+    source  => "file:${::tomcat::params::share_dir_r}/conf",
     owner   => $account,
     group   => $home_group_r,
     mode    => '0664',
