@@ -22,8 +22,8 @@ define tomcat::instance (
   $catalina_home = "${::tomcat::params::share_dir_r}"
 
   $initd_final   = $::tomcat::params::initd_type ? {
-    'sysv'    => "${::tomcat::params::initd_r}-${name}"
-    'systemd' => "/usr/lib/systemd/system/tomcat-${name}.service"
+    'sysv'    => "${::tomcat::params::initd_r}-${name}",
+    'systemd' => "/usr/lib/systemd/system/tomcat${::tomcat::params::majorversion}-${name}.service",
     'default' => "${::tomcat::params::initd_r}-${name}"
   }
 
