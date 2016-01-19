@@ -13,7 +13,7 @@ After=syslog.target network.target
 [Service]
 Type=simple
 Environment="NAME=%I"
-EnvironmentFile=-/etc/sysconfig/tomcat@%I
+EnvironmentFile=-<%= scope['::tomcat::params::sysconfig_r'] -%>-%I
 ExecStart=<%= scope['::tomcat::params::share_dir_r'] -%>/bin/startup.sh
 ExecStop=<%= scope['::tomcat::params::share_dir_r'] -%>/bin/shutdown.sh
 User=$TOMCAT_USER
