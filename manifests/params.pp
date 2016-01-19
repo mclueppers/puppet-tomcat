@@ -25,6 +25,7 @@ class tomcat::params (
             false => "${base_folder}/apache-tomcat-${version}"
           }
 
+          $initd_type     = 'sysv'
           $initd_r        = "/etc/init.d/tomcat${majorversion}"
           $initd_template = "initd-tomcat.erb"
 
@@ -43,7 +44,8 @@ class tomcat::params (
             false => "${base_folder}/apache-tomcat-${version}"
           }
 
-          $initd_r     = '/usr/lib/systemd/system/tomcat.service'
+          $initd_type     = 'systemd'
+          $initd_r        = '/usr/lib/systemd/system/tomcat.service'
           $initd_template = "systemd-tomcat.erb"
 
           if $pkgname == undef {

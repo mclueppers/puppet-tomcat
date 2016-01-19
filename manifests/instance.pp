@@ -21,6 +21,12 @@ define tomcat::instance (
   $instance_name = "tomcat${::tomcat::params::majorversion}/$name"
   $catalina_home = "${::tomcat::params::share_dir_r}"
 
+  $initd_final   = $::tomcat::params::initd_type ? {
+    'sysv'    => "${::tomcat::params::initd_r}-${name}"
+    'systemd' => "/usr/lib/systemd/system/tomcat-${name}.service"
+    'default' => "${::tomcat::params::initd_r}-${name}"
+  }
+
   $home_group_r = $home_group ? {
     undef   => $account,
     default => $home_group,
@@ -39,7 +45,7 @@ define tomcat::instance (
     content => template('tomcat/sysconfig.erb')
   }
 
-  file { "${::tomcat::params::initd_r}-${name}":
+  file { $initd_final:
     ensure  => link,
     owner   => 'root',
     group   => 'root',
