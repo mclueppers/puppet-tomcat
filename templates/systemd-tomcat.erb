@@ -17,8 +17,8 @@ EnvironmentFile=-<%= scope['::tomcat::params::sysconfig_r'] -%>-%I
 ExecStart=<%= scope['tomcat::base_folder'] -%>/libexec/server start
 ExecStop=<%= scope['tomcat::base_folder'] -%>/libexec/server stop
 SuccessExitStatus=143
-User=$TOMCAT_USER
-Group=$TOMCAT_USER
+User=${TOMCAT_USER}
+Group=${TOMCAT_USER}
 
 [Install]
 WantedBy=multi-user.target
