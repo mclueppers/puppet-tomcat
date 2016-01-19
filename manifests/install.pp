@@ -53,7 +53,7 @@ class tomcat::install { # lint:ignore:autoloader_layout
         purge   => false,
         source  => "puppet:///modules/tomcat/systemd-libexec/",
         owner   => 'root',
-        group   => 'root,
+        group   => 'root',
       }
     }
   } else {
