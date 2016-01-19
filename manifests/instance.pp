@@ -10,7 +10,9 @@ define tomcat::instance (
   $resources = undef,
   $tomcat_cluster = false,
   $catalina_opts = undef,
-  $templates_url = undef
+  $templates_url = undef,
+  $tomcat_admin_user = undef,
+  $tomcat_admin_password = undef
 ) {
   if ! defined(Class['tomcat']) {
     include tomcat
@@ -161,13 +163,24 @@ define tomcat::instance (
     mode   => '0664',
   } ->
 
+  file { "tomcat-users.xml-${name}":
+    ensure  => file,
+    path    => "${::tomcat::params::app_dir_r}/${name}/conf/tomcat-users.xml",
+    owner   => $account,
+    group   => $home_group_r,
+    mode    => '0664',
+    content => template('tomcat/tomcat-users.xml.erb'),
+    notify  => Service["tomcat${::tomcat::params::majorversion}-${name}"]
+  } ->
+
   file { "manager.xml-${name}":
     ensure  => file,
     path    => "${::tomcat::params::app_dir_r}/${name}/conf/Catalina/localhost/manager.xml",
     owner   => $account,
     group   => $home_group_r,
     mode    => '0664',
-    content => template('tomcat/manager.xml.erb')
+    content => template('tomcat/manager.xml.erb'),
+    notify  => Service["tomcat${::tomcat::params::majorversion}-${name}"]
   }
 
   concat { "${::tomcat::params::app_dir_r}/${name}/conf/server.xml":
