@@ -151,6 +151,23 @@ define tomcat::instance (
     owner   => $account,
     group   => $home_group_r,
     mode    => '0664',
+  } ->
+
+  file { [ "${::tomcat::params::app_dir_r}/${name}/conf/Catalina", 
+           "${::tomcat::params::app_dir_r}/${name}/conf/Catalina/localhost"]:
+    ensure => directory,
+    owner  => $account,
+    group  => $home_group_r,
+    mode   => '0664',
+  } ->
+
+  file { 'manager.xml-${name}':
+    ensure  => file,
+    path    => "${::tomcat::params::app_dir_r}/${name}/conf/Catalina/localhost/manager.xml",
+    owner   => $account,
+    group   => $home_group_r,
+    mode    => '0664',
+    content => template('tomcat/manager.xml.erb')
   }
 
   concat { "${::tomcat::params::app_dir_r}/${name}/conf/server.xml":
