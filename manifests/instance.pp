@@ -27,6 +27,12 @@ define tomcat::instance (
     'default' => "${::tomcat::params::initd_r}-${name}"
   }
 
+  $service_name  = $::tomcat::params::initd_type ? {
+    'sysv'    => "tomcat${::tomcat::params::majorversion}-${name}",
+    'systemd' => "tomcat@${name}",
+    'default' => "tomcat${::tomcat::params::majorversion}-${name}"
+  }
+
   $home_group_r = $home_group ? {
     undef   => $account,
     default => $home_group,
@@ -210,7 +216,7 @@ define tomcat::instance (
   #######
   # Service Configuration
   #######
-  service { "tomcat${::tomcat::params::majorversion}-${name}":
+  service { $service_name:
     enable  => true,
     require => File[$initd_final],
   }

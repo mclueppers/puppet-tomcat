@@ -4,12 +4,12 @@
 
 # Get the tomcat config (use this for environment specific settings)
 
-if [ -z "${TOMCAT_CFG_LOADED}" ]; then
-  if [ -z "${TOMCAT_CFG}" ]; then
-    TOMCAT_CFG="/etc/tomcat/tomcat.conf"
-  fi
-  . $TOMCAT_CFG
-fi
+#if [ -z "${TOMCAT_CFG_LOADED}" ]; then
+#  if [ -z "${TOMCAT_CFG}" ]; then
+#    TOMCAT_CFG="/etc/tomcat/tomcat.conf"
+#  fi
+#  . $TOMCAT_CFG
+#fi
 
 if [ -z "$CATALINA_BASE" ]; then
   if [ -n "$NAME" ]; then
