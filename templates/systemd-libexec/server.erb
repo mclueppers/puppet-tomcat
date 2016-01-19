@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. <%= scope['::tomcat::params::base_dir'] -%>/libexec/preamble
+. <%= scope['tomcat::base_dir'] -%>/libexec/preamble
 
 MAIN_CLASS=org.apache.catalina.startup.Bootstrap
 
