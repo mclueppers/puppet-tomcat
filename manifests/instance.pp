@@ -182,7 +182,7 @@ define tomcat::instance (
     group   => $home_group_r,
     mode    => '0664',
     content => template('tomcat/tomcat-users.xml.erb'),
-    notify  => Service["tomcat${::tomcat::params::majorversion}-${name}"]
+    notify  => Service[$service_name]
   } ->
 
   file { "manager.xml-${name}":
@@ -192,7 +192,7 @@ define tomcat::instance (
     group   => $home_group_r,
     mode    => '0664',
     content => template('tomcat/manager.xml.erb'),
-    notify  => Service["tomcat${::tomcat::params::majorversion}-${name}"]
+    notify  => Service[$service_name]
   }
 
   concat { "${::tomcat::params::app_dir_r}/${name}/conf/server.xml":
