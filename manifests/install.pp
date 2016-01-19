@@ -11,7 +11,13 @@ class tomcat::install { # lint:ignore:autoloader_layout
     $ajp_port      = 38080
     $account       = "root"
     $instance_name = "apache-tomcat-${::tomcat::version}"
-    
+
+    $initd_final   = $::tomcat::params::initd_type ? {
+      'sysv'    => "${::tomcat::params::initd_r}-${name}",
+      'systemd' => "/usr/lib/systemd/system/tomcat@${name}.service",
+      'default' => "${::tomcat::params::initd_r}-${name}"
+    }
+
     exec { "download-tomcat-${::tomcat::version} to ${::tomcat::base_folder}":
       cwd     => "${::tomcat::base_folder}", # lint:ignore:only_variable_string
       path    => '/bin:/sbin:/usr/sbin:/usr/bin',
@@ -38,6 +44,17 @@ class tomcat::install { # lint:ignore:autoloader_layout
       content => template("tomcat/${::tomcat::params::initd_template}"),
       mode    => "0755",
       require => File["${::tomcat::params::sysconfig_r}"]
+    }
+
+    if $::tomcat::params::initd_type == "systemd" {
+      file { "${::tomcat::base_folder}/libexec":
+        replace => false,
+        recurse => true,
+        purge   => false,
+        source  => "puppet:///modules/tomcat/systemd-libexec/",
+        owner   => 'root',
+        group   => 'root,
+      }
     }
   } else {
     package { "tomcat${::tomcat::params::majorversion}":

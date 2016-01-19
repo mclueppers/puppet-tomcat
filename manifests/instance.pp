@@ -23,7 +23,7 @@ define tomcat::instance (
 
   $initd_final   = $::tomcat::params::initd_type ? {
     'sysv'    => "${::tomcat::params::initd_r}-${name}",
-    'systemd' => "/usr/lib/systemd/system/tomcat@${name}.service",
+    'systemd' => "/etc/systemd/system/tomcat@${name}.service",
     'default' => "${::tomcat::params::initd_r}-${name}"
   }
 
