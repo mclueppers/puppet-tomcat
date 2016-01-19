@@ -14,8 +14,8 @@ After=syslog.target network.target
 Type=simple
 Environment="NAME=%I"
 EnvironmentFile=-<%= scope['::tomcat::params::sysconfig_r'] -%>-%I
-ExecStart=<%= scope['::tomcat::base_dir'] -%>/libexec/server start
-ExecStop=<%= scope['::tomcat::base_dir'] -%>/libexec/server stop
+ExecStart=<%= scope['::tomcat::params::base_dir'] -%>/libexec/server start
+ExecStop=<%= scope['::tomcat::params::base_dir'] -%>/libexec/server stop
 SuccessExitStatus=143
 User=$TOMCAT_USER
 Group=$TOMCAT_USER

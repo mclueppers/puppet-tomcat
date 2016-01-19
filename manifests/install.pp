@@ -54,7 +54,23 @@ class tomcat::install { # lint:ignore:autoloader_layout
         source  => "puppet:///modules/tomcat/systemd-libexec/",
         owner   => 'root',
         group   => 'root',
-      }
+      } ->
+
+      file { "${::tomcat::base_folder}/libexec/server":
+        ensure  => file,
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0755',
+        content => template('tomcat/systemd-libexec/server.erb')
+      } ->
+
+      file { "${::tomcat::base_folder}/libexec/preamble":
+        ensure  => file,
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0755',
+        content => template('tomcat/systemd-libexec/preamble.erb')
+      } ->
     }
   } else {
     package { "tomcat${::tomcat::params::majorversion}":
