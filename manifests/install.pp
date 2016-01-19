@@ -70,7 +70,7 @@ class tomcat::install { # lint:ignore:autoloader_layout
         group   => 'root',
         mode    => '0755',
         content => template('tomcat/systemd-libexec/preamble.erb')
-      } ->
+      }
     }
   } else {
     package { "tomcat${::tomcat::params::majorversion}":
