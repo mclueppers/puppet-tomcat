@@ -161,7 +161,7 @@ define tomcat::instance (
     mode   => '0664',
   } ->
 
-  file { 'manager.xml-${name}':
+  file { "manager.xml-${name}":
     ensure  => file,
     path    => "${::tomcat::params::app_dir_r}/${name}/conf/Catalina/localhost/manager.xml",
     owner   => $account,
