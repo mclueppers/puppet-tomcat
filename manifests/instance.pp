@@ -1,4 +1,5 @@
 # Installs and configures a Tomcat instance
+# lint:ignore:80chars lint:ignore:autoloader_layout
 
 define tomcat::instance (
   $account = undef,
@@ -18,8 +19,8 @@ define tomcat::instance (
     include tomcat
   }
 
-  $instance_name = "tomcat${::tomcat::params::majorversion}/$name"
-  $catalina_home = "${::tomcat::params::share_dir_r}"
+  $instance_name = "tomcat${::tomcat::params::majorversion}/${name}"
+  $catalina_home = $::tomcat::params::share_dir_r
 
   $initd_final   = $::tomcat::params::initd_type ? {
     'sysv'    => "${::tomcat::params::initd_r}-${name}",
@@ -55,14 +56,14 @@ define tomcat::instance (
     ensure  => link,
     owner   => 'root',
     group   => 'root',
-    target  => "${::tomcat::params::initd_r}",
+    target  => $::tomcat::params::initd_r,
     require => Class['tomcat::install'],
   }
 
   ######
   # Cache Directories
   ######
-  $cache_dirs = [ "${::tomcat::params::cache_dir_r}",
+  $cache_dirs = [ $::tomcat::params::cache_dir_r,
                   "${::tomcat::params::cache_dir_r}/${name}",
                   "${::tomcat::params::cache_dir_r}/${name}/temp",
                   "${::tomcat::params::cache_dir_r}/${name}/work" ]
@@ -76,7 +77,7 @@ define tomcat::instance (
   #######
   # Application Home Resources
   #######
-  $app_dirs = [ "${::tomcat::params::app_dir_r}",
+  $app_dirs = [ $::tomcat::params::app_dir_r,
                 "${::tomcat::params::app_dir_r}/${name}",
                 "${::tomcat::params::app_dir_r}/${name}/Catalina",
                 "${::tomcat::params::app_dir_r}/${name}/Catalina/localhost",
@@ -107,7 +108,7 @@ define tomcat::instance (
     target => "${::tomcat::params::cache_dir_r}/${name}/work"
   }
 
-  file { [ "${::tomcat::params::log_dir_r}", "${::tomcat::params::log_dir_r}/${name}" ]:
+  file { [ $::tomcat::params::log_dir_r, "${::tomcat::params::log_dir_r}/${name}" ]:
     ensure => directory,
     owner  => $account,
     group  => $log_group_r,
@@ -167,8 +168,8 @@ define tomcat::instance (
     mode    => '0664',
   } ->
 
-  file { [ "${::tomcat::params::app_dir_r}/${name}/conf/Catalina", 
-           "${::tomcat::params::app_dir_r}/${name}/conf/Catalina/localhost"]:
+  file { ["${::tomcat::params::app_dir_r}/${name}/conf/Catalina",
+          "${::tomcat::params::app_dir_r}/${name}/conf/Catalina/localhost"]:
     ensure => directory,
     owner  => $account,
     group  => $home_group_r,
@@ -221,3 +222,5 @@ define tomcat::instance (
     require => File[$initd_final],
   }
 }
+
+# lint:endignore
