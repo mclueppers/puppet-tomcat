@@ -1,4 +1,5 @@
 # Installs and configures a Tomcat instance
+# lint:ignore:80chars lint:ignore:autoloader_layout
 
 define tomcat::instance (
   $account = undef,
@@ -10,14 +11,28 @@ define tomcat::instance (
   $resources = undef,
   $tomcat_cluster = false,
   $catalina_opts = undef,
-  $templates_url = undef
+  $templates_url = undef,
+  $tomcat_admin_user = undef,
+  $tomcat_admin_password = undef
 ) {
   if ! defined(Class['tomcat']) {
     include tomcat
   }
 
-  $instance_name = "tomcat${::tomcat::params::majorversion}/$name"
-  $catalina_home = "${::tomcat::params::share_dir_r}"
+  $instance_name = "tomcat${::tomcat::params::majorversion}/${name}"
+  $catalina_home = $::tomcat::params::share_dir_r
+
+  $initd_final   = $::tomcat::params::initd_type ? {
+    'sysv'    => "${::tomcat::params::initd_r}-${name}",
+    'systemd' => "/etc/systemd/system/tomcat@${name}.service",
+    'default' => "${::tomcat::params::initd_r}-${name}"
+  }
+
+  $service_name  = $::tomcat::params::initd_type ? {
+    'sysv'    => "tomcat${::tomcat::params::majorversion}-${name}",
+    'systemd' => "tomcat@${name}",
+    'default' => "tomcat${::tomcat::params::majorversion}-${name}"
+  }
 
   $home_group_r = $home_group ? {
     undef   => $account,
@@ -37,18 +52,18 @@ define tomcat::instance (
     content => template('tomcat/sysconfig.erb')
   }
 
-  file { "${::tomcat::params::initd_r}-${name}":
+  file { $initd_final:
     ensure  => link,
     owner   => 'root',
     group   => 'root',
-    target  => "${::tomcat::params::initd_r}",
+    target  => $::tomcat::params::initd_r,
     require => Class['tomcat::install'],
   }
 
   ######
   # Cache Directories
   ######
-  $cache_dirs = [ "${::tomcat::params::cache_dir_r}",
+  $cache_dirs = [ $::tomcat::params::cache_dir_r,
                   "${::tomcat::params::cache_dir_r}/${name}",
                   "${::tomcat::params::cache_dir_r}/${name}/temp",
                   "${::tomcat::params::cache_dir_r}/${name}/work" ]
@@ -62,7 +77,7 @@ define tomcat::instance (
   #######
   # Application Home Resources
   #######
-  $app_dirs = [ "${::tomcat::params::app_dir_r}",
+  $app_dirs = [ $::tomcat::params::app_dir_r,
                 "${::tomcat::params::app_dir_r}/${name}",
                 "${::tomcat::params::app_dir_r}/${name}/Catalina",
                 "${::tomcat::params::app_dir_r}/${name}/Catalina/localhost",
@@ -93,7 +108,7 @@ define tomcat::instance (
     target => "${::tomcat::params::cache_dir_r}/${name}/work"
   }
 
-  file { [ "${::tomcat::params::log_dir_r}", "${::tomcat::params::log_dir_r}/${name}" ]:
+  file { [ $::tomcat::params::log_dir_r, "${::tomcat::params::log_dir_r}/${name}" ]:
     ensure => directory,
     owner  => $account,
     group  => $log_group_r,
@@ -147,10 +162,38 @@ define tomcat::instance (
     replace => false,
     recurse => true,
     purge   => false,
-    source  => 'puppet:///modules/tomcat/app-home/',
+    source  => "file:${::tomcat::params::share_dir_r}/conf",
     owner   => $account,
     group   => $home_group_r,
     mode    => '0664',
+  } ->
+
+  file { ["${::tomcat::params::app_dir_r}/${name}/conf/Catalina",
+          "${::tomcat::params::app_dir_r}/${name}/conf/Catalina/localhost"]:
+    ensure => directory,
+    owner  => $account,
+    group  => $home_group_r,
+    mode   => '0664',
+  } ->
+
+  file { "tomcat-users.xml-${name}":
+    ensure  => file,
+    path    => "${::tomcat::params::app_dir_r}/${name}/conf/tomcat-users.xml",
+    owner   => $account,
+    group   => $home_group_r,
+    mode    => '0664',
+    content => template('tomcat/tomcat-users.xml.erb'),
+    notify  => Service[$service_name]
+  } ->
+
+  file { "manager.xml-${name}":
+    ensure  => file,
+    path    => "${::tomcat::params::app_dir_r}/${name}/conf/Catalina/localhost/manager.xml",
+    owner   => $account,
+    group   => $home_group_r,
+    mode    => '0664',
+    content => template('tomcat/manager.xml.erb'),
+    notify  => Service[$service_name]
   }
 
   concat { "${::tomcat::params::app_dir_r}/${name}/conf/server.xml":
@@ -174,8 +217,10 @@ define tomcat::instance (
   #######
   # Service Configuration
   #######
-  service { "tomcat${::tomcat::params::majorversion}-${name}":
+  service { $service_name:
     enable  => true,
-    require => File["${::tomcat::params::initd_r}-${name}"],
+    require => File[$initd_final],
   }
 }
+
+# lint:endignore

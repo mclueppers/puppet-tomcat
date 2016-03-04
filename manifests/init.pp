@@ -34,12 +34,16 @@
 #
 # Copyright 2015 Your name here, unless otherwise noted.
 #
+# lint:ignore:autoloader_layout
+
 class tomcat (
   $download_url = $tomcat::params::download_url,
   $base_folder  = $tomcat::params::base_folder,
   $use_repo     = $tomcat::params::use_repo,
   $version      = $tomcat::params::version,
   $pkgname      = $tomcat::params::pkgname
-) inherits tomcat::params {
+) inherits tomcat::params { # lint:ignore:class_inherits_from_params_class
   include tomcat::install
 }
+
+# lint:endignore

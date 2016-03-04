@@ -1,3 +1,5 @@
+# lint:ignore:autoloader_layout
+
 class tomcat::params (
   $download_url = hiera('tomcat::download_url', 'http://archive.apache.org/dist/tomcat'),
   $base_folder  = hiera('tomcat::base_folder', '/home/mdobrev'),
@@ -21,12 +23,13 @@ class tomcat::params (
       case $::operatingsystemmajrelease {
         '6': {
           $share_dir_r    = $use_repo ? {
-            true  => "/usr/share/tomcat6",
+            true  => '/usr/share/tomcat6',
             false => "${base_folder}/apache-tomcat-${version}"
           }
 
+          $initd_type     = 'sysv'
           $initd_r        = "/etc/init.d/tomcat${majorversion}"
-          $initd_template = "initd-tomcat.erb"
+          $initd_template = 'initd-tomcat.erb'
 
           if $pkgname == undef {
             $pkgname_r = $majorversion ? {
@@ -39,12 +42,13 @@ class tomcat::params (
         }
         '7': {
           $share_dir_r = $use_repo ? {
-            true  => "/usr/share/tomcat",
+            true  => '/usr/share/tomcat',
             false => "${base_folder}/apache-tomcat-${version}"
           }
 
-          $initd_r     = '/usr/lib/systemd/system/tomcat.service'
-          $initd_template = "systemd-tomcat.erb"
+          $initd_type     = 'systemd'
+          $initd_r        = '/etc/systemd/system/tomcat@.service'
+          $initd_template = 'systemd-tomcat.erb'
 
           if $pkgname == undef {
             $pkgname_r = 'tomcat'
@@ -57,10 +61,10 @@ class tomcat::params (
 
     'Debian', 'Ubuntu': {
       $share_dir_r = $use_repo ? {
-        true  => "/usr/share/tomcat",
+        true  => '/usr/share/tomcat',
         false => "${base_folder}/apache-tomcat-${version}"
       }
- 
+
       $sysconfig_r = "/etc/default/tomcat${majorversion}"
 
       if $pkgname == undef {
@@ -74,3 +78,5 @@ class tomcat::params (
     }
   }
 }
+
+# lint:endignore

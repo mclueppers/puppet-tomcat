@@ -7,16 +7,15 @@
 # 2. profit.
 
 [Unit]
-Description=Apache Tomcat Web Application Container
+Description=Apache Tomcat Web Application Container - %I
 After=syslog.target network.target
 
 [Service]
 Type=simple
-EnvironmentFile=/etc/tomcat/tomcat.conf
 Environment="NAME=%I"
-EnvironmentFile=-/etc/sysconfig/tomcat@%I
-ExecStart=/usr/libexec/tomcat/server start
-ExecStop=/usr/libexec/tomcat/server stop
+EnvironmentFile=-<%= scope['::tomcat::params::sysconfig_r'] -%>-%I
+ExecStart=<%= scope['tomcat::base_folder'] -%>/libexec/server start
+ExecStop=<%= scope['tomcat::base_folder'] -%>/libexec/server stop
 SuccessExitStatus=143
 User=tomcat
 Group=tomcat
