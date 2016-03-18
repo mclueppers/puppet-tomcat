@@ -2,8 +2,8 @@
 
 . <%= scope['tomcat::base_folder'] -%>/libexec/preamble
 
-if [[ -f $CATALINA_HOME/bin/setenv.sh ]]; then
-  . $CATALINA_HOME/bin/setenv.sh
+if [[ -f $CATALINA_HOME/conf/setenv.sh ]]; then
+  . $CATALINA_HOME/conf/setenv.sh
 fi
 
 MAIN_CLASS=org.apache.catalina.startup.Bootstrap
