@@ -8,6 +8,7 @@ define tomcat::instance (
   $shutdown_port = undef,
   $home_group = undef,
   $log_group = undef,
+  $limits = undef,
   $resources = undef,
   $tomcat_cluster = false,
   $catalina_opts = undef,
@@ -58,6 +59,25 @@ define tomcat::instance (
     group   => 'root',
     target  => $::tomcat::params::initd_r,
     require => Class['tomcat::install'],
+  }
+
+  if ($::tomcat::params::initd_type == 'systemd') {
+    file { "${initd_final}.d":
+      ensure  => 'directory',
+      group   => 'root',
+      owner   => 'root',
+      require => File[$initd_final]
+    }
+
+    if is_hash($limits) {
+      file { "${initd_final}.d/limits.conf":
+        ensure  => 'file',
+        content => template('tomcat/systemd-limits.conf.erb'),
+        group   => 'root',
+        owner   => 'root',
+        require => File["${initd_final}.d"]
+      }
+    }
   }
 
   ######
