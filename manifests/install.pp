@@ -4,8 +4,10 @@
 class tomcat::install {
   # Make sure base_folder exists
 
-  file { $::tomcat::base_folder:
-    ensure => directory
+  if ! defined(File[$::tomcat::base_folder]) {
+    file { $::tomcat::base_folder:
+      ensure => directory
+    }
   }
 
   if ! $::tomcat::use_repo {

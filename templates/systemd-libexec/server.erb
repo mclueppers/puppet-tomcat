@@ -2,6 +2,10 @@
 
 . <%= scope['tomcat::base_folder'] -%>/libexec/preamble
 
+if [[ -f $CATALINA_BASE/conf/setenv.sh ]]; then
+  . $CATALINA_BASE/conf/setenv.sh
+fi
+
 MAIN_CLASS=org.apache.catalina.startup.Bootstrap
 
 FLAGS="$JAVA_OPTS $CATALINA_OPTS"
