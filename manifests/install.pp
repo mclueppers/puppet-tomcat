@@ -6,7 +6,8 @@ class tomcat::install {
 
   if ! defined(File[$::tomcat::base_folder]) {
     file { $::tomcat::base_folder:
-      ensure => directory
+      ensure => directory,
+      mode   => '0700'
     }
   }
 
