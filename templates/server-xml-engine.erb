@@ -1,4 +1,4 @@
-    <Engine name="Catalina" defaultHost="<%= defaulthost -%>"<% if @tomcat_cluster -%> jvmRoute="<%= jvmroute -%>"<% end -%>>
+    <Engine name="Catalina" defaultHost="<%= @defaulthost -%>"<% if @tomcat_cluster -%> jvmRoute="<%= @jvmroute -%>"<% end -%>>
         <Realm className="org.apache.catalina.realm.UserDatabaseRealm"
              resourceName="UserDatabase"/>
         <Host name="localhost"  appBase="webapps"
