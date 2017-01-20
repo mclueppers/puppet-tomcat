@@ -35,7 +35,7 @@ class tomcat::install {
       cwd     => $::tomcat::base_folder,
       path    => '/bin:/sbin:/usr/sbin:/usr/bin',
       creates => "${::tomcat::base_folder}/apache-tomcat-${::tomcat::version}",
-      command => "tar -zxf ${::tomcat::base_folder}/apache-tomcat-${::tomcat::version}.tar.gz -C ${::tomcat::base_folder}; chmod o+rx ${::tomcat::base_folder}/apache-tomcat-${::tomcat::version}; chmod o+rx ${::tomcat::base_folder}/apache-tomcat-${::tomcat::version}/bin; chmod o+rx ${::tomcat::base_folder}/apache-tomcat-${::tomcat::version}/webapps -R", # lint:ignore:80chars
+      command => "tar -zxf ${::tomcat::base_folder}/apache-tomcat-${::tomcat::version}.tar.gz -C ${::tomcat::base_folder}; chmod o+r ${::tomcat::base_folder}/apache-tomcat-${::tomcat::version} -R; chmod o+rx ${::tomcat::base_folder}/apache-tomcat-${::tomcat::version}/bin; chmod o+rx ${::tomcat::base_folder}/apache-tomcat-${::tomcat::version}/lib; chmod o+rx ${::tomcat::base_folder}/apache-tomcat-${::tomcat::version}/webapps -R", # lint:ignore:80chars
       require => Exec["download-tomcat-${::tomcat::version} to ${::tomcat::base_folder}"] # lint:ignore:80chars
     }
 
