@@ -25,7 +25,7 @@ define tomcat::instance (
 
   $initd_final   = $::tomcat::params::initd_type ? {
     'sysv'    => "${::tomcat::params::initd_r}-${name}",
-    'systemd' => "/etc/systemd/system/tomcat@${name}.service",
+    'systemd' => "/lib/systemd/system/tomcat@${name}.service",
     'default' => "${::tomcat::params::initd_r}-${name}"
   }
 
@@ -54,15 +54,17 @@ define tomcat::instance (
   }
 
   file { $initd_final:
-    ensure  => link,
+    ensure  => file,
     owner   => 'root',
     group   => 'root',
-    target  => $::tomcat::params::initd_r,
+    source  => $::tomcat::params::initd_r,
     require => Class['tomcat::install'],
   }
 
   if ($::tomcat::params::initd_type == 'systemd') {
-    file { "${initd_final}.d":
+    $custom_service_settings = "/etc/systemd/system/tomcat@${name}"
+
+    file { "${custom_service_settings}.d":
       ensure  => 'directory',
       group   => 'root',
       owner   => 'root',
@@ -70,12 +72,12 @@ define tomcat::instance (
     }
 
     if is_hash($limits) {
-      file { "${initd_final}.d/limits.conf":
+      file { "${custom_service_settings}.d/limits.conf":
         ensure  => 'file',
         content => template('tomcat/systemd-limits.conf.erb'),
         group   => 'root',
         owner   => 'root',
-        require => File["${initd_final}.d"]
+        require => File["${custom_service_settings}.d"]
       }
     }
   }

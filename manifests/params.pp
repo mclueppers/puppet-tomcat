@@ -47,7 +47,7 @@ class tomcat::params (
           }
 
           $initd_type     = 'systemd'
-          $initd_r        = '/etc/systemd/system/tomcat@.service'
+          $initd_r        = '/lib/systemd/system/tomcat@.service'
           $initd_template = 'systemd-tomcat.erb'
 
           if $pkgname == undef {
